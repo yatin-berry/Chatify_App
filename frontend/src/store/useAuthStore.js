@@ -3,7 +3,9 @@ import {axiosInstance} from '../lib/axios'
 import { io } from "socket.io-client";
 import { toast } from "react-hot-toast";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "/";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL 
+  ? import.meta.env.VITE_BACKEND_URL.replace("/api", "") 
+  : (import.meta.env.MODE === "development" ? "http://localhost:3000" : "https://chatify-app-v2cc.onrender.com");
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
