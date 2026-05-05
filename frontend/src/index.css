@@ -2,34 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-@property --border-angle {
-  inherits: false;
-  initial-value: 0deg;
-  syntax: "<angle>";
+@layer base {
+  :root {
+    --primary: 99 102 241;
+    --accent: 139 92 246;
+    --background: 2 6 23;
+  }
+  
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased overflow-hidden;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
 }
 
-.input {
-  @apply w-full bg-slate-800/50 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-slate-200 placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent;
+@layer components {
+  .glass-card {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .glass-morphism {
+    @apply bg-slate-900/40 backdrop-blur-md border border-white/5;
+  }
+
+  .input-modern {
+    @apply w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-white placeholder-slate-500 
+    transition-all duration-300 focus:bg-white/10 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 outline-none;
+  }
+
+  .btn-primary-modern {
+    @apply relative overflow-hidden bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl py-3 px-6 font-semibold 
+    transition-all duration-300 active:scale-95 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40;
+  }
+
+  .mesh-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: #020617;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(225,39%,30%,1) 0, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(253,16%,7%,1) 0, transparent 50%);
+    filter: blur(80px);
+    opacity: 0.8;
+  }
 }
 
-.auth-input-icon {
-  @apply absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-5;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.auth-input-label {
-  @apply block text-sm font-medium text-slate-300 mb-2;
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
 }
 
-.auth-badge {
-  @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-cyan-500/20 text-cyan-300;
-}
-
-.auth-btn {
-  @apply w-full bg-cyan-500 text-white rounded-lg py-2.5 font-medium
-  hover:bg-cyan-600 focus:ring-2 focus:ring-cyan-500;
-}
-
-.auth-link {
-  @apply px-4 py-2 inline-block bg-cyan-500/10 rounded-lg text-cyan-400
-  hover:text-cyan-500 text-sm transition-colors;
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
 }

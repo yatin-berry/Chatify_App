@@ -71,15 +71,20 @@ export const useChatStore = create((set, get) => ({
       createdAt: new Date().toISOString(),
       isOptimistic: true, // flag to identify optimistic messages (optional)
     };
-    // immidetaly update the ui by adding the message
-    set({ messages: [...messages, optimisticMessage] });
+    // immediately update the ui by adding the message
+    set({ messages: [...get().messages, optimisticMessage] });
 
     try {
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
-      set({ messages: messages.concat(res.data) });
+      // replace the optimistic message with the real one from backend
+      set({ 
+        messages: get().messages.map(msg => msg._id === tempId ? res.data : msg) 
+      });
     } catch (error) {
       // remove optimistic message on failure
-      set({ messages: messages });
+      set({ 
+        messages: get().messages.filter(msg => msg._id !== tempId) 
+      });
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   },

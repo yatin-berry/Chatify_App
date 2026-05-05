@@ -1,4 +1,5 @@
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useLocation } from "react-router";
+import { AnimatePresence, motion } from "framer-motion";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -10,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 
 function App() {
   const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
@@ -18,19 +20,39 @@ function App() {
   if (isCheckingAuth) return <PageLoader />;
 
   return (
-    <div className="min-h-screen bg-slate-900 relative flex items-center justify-center p-4 overflow-hidden">
-      {/* DECORATORS - GRID BG & GLOW SHAPES */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]" />
-      <div className="absolute top-0 -left-4 size-96 bg-pink-500 opacity-20 blur-[100px]" />
-      <div className="absolute bottom-0 -right-4 size-96 bg-cyan-500 opacity-20 blur-[100px]" />
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+      {/* Dynamic Background */}
+      <div className="mesh-gradient" />
+      
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+          className="w-full h-full flex items-center justify-center p-4 z-10"
+        >
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={authUser ? <ChatPage /> : <Navigate to={"/login"} />} />
+            <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
+            <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
 
-      <Routes>
-        <Route path="/" element={authUser ? <ChatPage /> : <Navigate to={"/login"} />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to={"/"} />} />
-        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />} />
-      </Routes>
-
-      <Toaster />
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          className: 'glass-morphism text-white border-white/10',
+          style: {
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(12px)',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }
+        }}
+      />
     </div>
   );
 }

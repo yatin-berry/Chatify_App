@@ -42,10 +42,10 @@ export const signup = async (req, res) => {
       generateToken(savedUser._id, res);
 
         res.status(201).json({ 
-            id:newUser._id,
-            userName:newUser.userName,
-            email:newUser.email,
-            profilePic:newUser.profilePicture });
+            _id:savedUser._id,
+            userName:savedUser.userName,
+            email:savedUser.email,
+            profilePicture:savedUser.profilePicture });
       try {
         await sendWelcomeEmail(savedUser.email, savedUser.userName, ENV.CLIENT_URL);
       } catch (error) {
@@ -78,10 +78,10 @@ export const login = async (req, res) => {
     }
     generateToken(user._id, res);
     res.status(200).json({
-      id:user._id,
+      _id:user._id,
       userName:user.userName,
       email:user.email,
-      profilePic:user.profilePicture
+      profilePicture:user.profilePicture
     });
   } catch (error) {
     console.error("Error: ", error);
@@ -96,20 +96,21 @@ export const logout = async (_, res) => {
 
 export const updateprofile = async (req, res) => {
   try{
-    const {profilePic} = req.body;
-    if(!profilePic){
+    const {profilePicture} = req.body;
+    if(!profilePicture){
       return res.status(400).json({message:"Profile picture is required"});
     }
 
     const userId= req.user._id;
     
-    const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+    const uploadedResponse = await cloudinary.uploader.upload(profilePicture);
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {profilePicture:uploadedResponse.secure_url}, 
       {new:true}
-    );
-    res.status(200).json({message:"Profile picture updated successfully"});
+    ).select("-password");
+
+    res.status(200).json(updatedUser);
   } catch(error){
     console.error("Error: ", error);
     res.status(500).json({ message: "Internal server error" });

@@ -5,6 +5,7 @@ import ChatHeader from "./ChatHeader";
 import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import MessageInput from "./MessageInput";
 import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
+import { motion, AnimatePresence } from "framer-motion";
 
 function ChatContainer() {
   const {
@@ -21,10 +22,8 @@ function ChatContainer() {
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
     subscribeToMessages();
-
-    // clean up
     return () => unsubscribeFromMessages();
-  }, [selectedUser, getMessagesByUserId, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser._id, getMessagesByUserId, subscribeToMessages, unsubscribeFromMessages]);
 
   useEffect(() => {
     if (messageEndRef.current) {
@@ -33,48 +32,63 @@ function ChatContainer() {
   }, [messages]);
 
   return (
-    <>
+    <div className="flex-1 flex flex-col h-full">
       <ChatHeader />
-      <div className="flex-1 px-6 overflow-y-auto py-8">
-        {messages.length > 0 && !isMessagesLoading ? (
-          <div className="max-w-3xl mx-auto space-y-6">
-            {messages.map((msg) => (
-              <div
-                key={msg._id}
-                className={`chat ${msg.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-              >
-                <div
-                  className={`chat-bubble relative ${
-                    msg.senderId === authUser._id
-                      ? "bg-cyan-600 text-white"
-                      : "bg-slate-800 text-slate-200"
-                  }`}
-                >
-                  {msg.image && (
-                    <img src={msg.image} alt="Shared" className="rounded-lg h-48 object-cover" />
-                  )}
-                  {msg.text && <p className="mt-2">{msg.text}</p>}
-                  <p className="text-xs mt-1 opacity-75 flex items-center gap-1">
-                    {new Date(msg.createdAt).toLocaleTimeString(undefined, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
-              </div>
-            ))}
-            {/* 👇 scroll target */}
+      
+      <div className="flex-1 overflow-y-auto px-6 py-8 custom-scrollbar">
+        {isMessagesLoading ? (
+          <MessagesLoadingSkeleton />
+        ) : messages.length > 0 ? (
+          <div className="max-w-4xl mx-auto space-y-6">
+            <AnimatePresence initial={false}>
+              {messages.map((msg, idx) => {
+                const isSentByMe = msg.senderId === authUser._id;
+                return (
+                  <motion.div
+                    key={msg._id || idx}
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className={`max-w-[70%] group`}>
+                      <div className={`
+                        relative px-5 py-3 shadow-xl
+                        ${isSentByMe 
+                          ? "bg-indigo-600 text-white rounded-[20px] rounded-tr-none" 
+                          : "glass-morphism text-slate-200 rounded-[20px] rounded-tl-none"}
+                      `}>
+                        {msg.image && (
+                          <motion.img 
+                            layoutId={msg._id}
+                            src={msg.image} 
+                            alt="Shared image" 
+                            className="rounded-xl mb-3 max-h-60 w-full object-cover cursor-zoom-in" 
+                          />
+                        )}
+                        {msg.text && <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>}
+                        
+                        <div className={`
+                          text-[10px] mt-1.5 font-medium opacity-60 flex items-center gap-1
+                          ${isSentByMe ? "justify-end" : "justify-start"}
+                        `}>
+                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {isSentByMe && <span className="text-emerald-400">●</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
             <div ref={messageEndRef} />
           </div>
-        ) : isMessagesLoading ? (
-          <MessagesLoadingSkeleton />
         ) : (
           <NoChatHistoryPlaceholder name={selectedUser.userName} />
         )}
       </div>
 
       <MessageInput />
-    </>
+    </div>
   );
 }
 

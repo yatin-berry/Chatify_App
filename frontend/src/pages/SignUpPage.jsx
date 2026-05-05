@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import BorderAnimatedContainer from "../components/borderAnimatedContainer";
 import { MessageCircleIcon, LockIcon, MailIcon, UserIcon, LoaderIcon } from "lucide-react";
 import { Link } from "react-router";
+import { motion } from "framer-motion";
 
 function SignUpPage() {
   const [formData, setFormData] = useState({ userName: "", email: "", password: "" });
@@ -14,111 +14,96 @@ function SignUpPage() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center p-4 bg-slate-900">
-      <div className="relative w-full max-w-6xl md:h-[800px] h-[650px]">
-        <BorderAnimatedContainer>
-          <div className="w-full flex flex-col md:flex-row">
-            {/* FORM CLOUMN - LEFT SIDE */}
-            <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30">
-              <div className="w-full max-w-md">
-                {/* HEADING TEXT */}
-                <div className="text-center mb-8">
-                  <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
-                  <h2 className="text-2xl font-bold text-slate-200 mb-2">Create Account</h2>
-                  <p className="text-slate-400">Sign up for a new account</p>
-                </div>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-md"
+    >
+      <div className="glass-card rounded-[2.5rem] p-8 md:p-12 overflow-hidden relative">
+        {/* Glow Decorator */}
+        <div className="absolute -bottom-24 -left-24 size-48 bg-purple-500/20 blur-[80px]" />
 
-                {/* FORM */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* FULL NAME */}
-                  <div>
-                    <label className="auth-input-label">Full Name</label>
-                    <div className="relative">
-                      <UserIcon className="auth-input-icon" />
-
-                      <input
-                        type="text"
-                        value={formData.userName}
-                        onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
-                        className="input"
-                        placeholder="Enter your name"
-                      />
-                    </div>
-                  </div>
-
-                  {/* EMAIL INPUT */}
-                  <div>
-                    <label className="auth-input-label">Email</label>
-                    <div className="relative">
-                      <MailIcon className="auth-input-icon" />
-
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="input"
-                        placeholder="Enter your email"
-                      />
-                    </div>
-                  </div>
-
-                  {/* PASSWORD INPUT */}
-                  <div>
-                    <label className="auth-input-label">Password</label>
-                    <div className="relative">
-                      <LockIcon className="auth-input-icon" />
-
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="input"
-                        placeholder="Enter your password"
-                      />
-                    </div>
-                  </div>
-
-                  {/* SUBMIT BUTTON */}
-                  <button className="auth-btn" type="submit" disabled={isSigningUp}>
-                    {isSigningUp ? (
-                      <LoaderIcon className="w-full h-5 animate-spin text-center" />
-                    ) : (
-                      "Create Account"
-                    )}
-                  </button>
-                </form>
-
-                <div className="mt-6 text-center">
-                  <Link to="/login" className="auth-link">
-                    Already have an account? Login
-                  </Link>
-                </div>
-              </div>
+        <div className="relative z-10">
+          <div className="text-center mb-8">
+            <div className="size-16 bg-purple-600/20 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-purple-500/30">
+              <MessageCircleIcon className="size-8 text-purple-400" />
             </div>
-
-            {/* FORM ILLUSTRATION - RIGHT SIDE */}
-            <div className="hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent">
-              <div>
-                <img
-                  src="/images.png"
-                  alt="People using mobile devices"
-                  className="w-full h-auto object-contain"
-                />
-                <div className="mt-6 text-center">
-                  <h3 className="text-xl font-medium text-cyan-400">Start Your Journey Today</h3>
-
-                  <div className="mt-4 flex justify-center gap-4">
-                    <span className="auth-badge">Free</span>
-                    <span className="auth-badge">Easy Setup</span>
-                    <span className="auth-badge">Private</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h2 className="text-3xl font-bold text-white tracking-tight">Join Chatify</h2>
+            <p className="text-slate-400 mt-2">Connect with the world in real-time</p>
           </div>
-        </BorderAnimatedContainer>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-300 ml-1">Full Name</label>
+              <div className="relative group">
+                <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+                <input
+                  type="text"
+                  value={formData.userName}
+                  onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+                  className="input-modern pl-12"
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-300 ml-1">Email Address</label>
+              <div className="relative group">
+                <MailIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="input-modern pl-12"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-300 ml-1">Password</label>
+              <div className="relative group">
+                <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+                <input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="input-modern pl-12"
+                  placeholder="Enter your password"
+                  required
+                  minLength={6}
+                />
+              </div>
+            </div>
+
+            <button
+              className="btn-primary-modern w-full !bg-purple-600 hover:!bg-purple-500 mt-6 flex items-center justify-center gap-2"
+              type="submit"
+              disabled={isSigningUp}
+            >
+              {isSigningUp ? (
+                <LoaderIcon className="size-5 animate-spin" />
+              ) : (
+                "Create Account"
+              )}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-slate-400 text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
+
 export default SignUpPage;
