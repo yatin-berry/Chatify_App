@@ -22,16 +22,7 @@ if (ENV.NODE_ENV === "development") {
 }
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (origins.indexOf(origin) !== -1 || origins.length === 0) {
-      callback(null, true);
-    } else {
-      console.log("CORS Blocked for origin:", origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true,
   credentials: true,
 }));
 

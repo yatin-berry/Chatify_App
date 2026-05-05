@@ -13,7 +13,7 @@ if (ENV.NODE_ENV === "development") {
 
 const io = new Server(server, {
   cors: {
-    origin: origins,
+    origin: true,
     credentials: true,
   },
 });
