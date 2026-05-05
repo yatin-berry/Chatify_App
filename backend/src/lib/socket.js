@@ -6,9 +6,15 @@ import { ENV } from "./env.js";
 const app = express();
 const server = http.createServer(app);
 
+const origins = ENV.CLIENT_URL ? ENV.CLIENT_URL.split(',').map(url => url.trim().replace(/\/$/, "")) : [];
+if (ENV.NODE_ENV === "development") {
+  origins.push("http://localhost:5173");
+}
+
 const io = new Server(server, {
   cors: {
-    origin: [ENV.CLIENT_URL],
+    origin: origins,
+    credentials: true,
   },
 });
 
